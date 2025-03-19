@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PalabraController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -14,4 +15,5 @@ Route::post('/verificar-otp', [UserController::class, 'verificarOtp']);
 Route::get('/forgot-password/{email}', [UserController::class, 'forgotPassword']);
 Route::post('/reset-password', [UserController::class, 'resetPassword']);
 Route::get('/verificar-otp-password/{email}/{otp}', [UserController::class, 'verificarOtpPassword']);
+Route::post('/registerWord', [PalabraController::class, 'store']);
 
