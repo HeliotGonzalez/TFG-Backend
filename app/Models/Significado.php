@@ -12,4 +12,13 @@ class Significado extends Model
         'etiquetas' => 'array',
         'estado' => 'boolean'
     ];
+
+    public function videos(){
+        return $this->hasMany(Video::class);
+    }
+    
+    public function highestVotedVideo(){
+        return $this->hasOne(Video::class)->orderBy('likes', 'desc');
+    }
+
 }

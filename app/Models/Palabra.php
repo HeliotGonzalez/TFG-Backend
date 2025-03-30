@@ -12,4 +12,8 @@ class Palabra extends Model
         'etiquetas' => 'array',
         'estado' => 'boolean'
     ];
+
+    public function significado(){
+        return $this->belongsTo(Significado::class, 'significado_id');
+    }
 }

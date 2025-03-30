@@ -35,5 +35,9 @@ class PalabraController extends Controller
         
         return response()->json(['message' => 'Nueva palabra registrada'], 200);
     }
-    
+
+    public function getWords($letter){
+        $words = Palabra::with('significado.highestVotedVideo')->where('nombre', 'like', $letter.'%')->get();
+        return response()->json($words, 200);
+    }    
 }

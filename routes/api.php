@@ -16,4 +16,5 @@ Route::get('/forgot-password/{email}', [UserController::class, 'forgotPassword']
 Route::post('/reset-password', [UserController::class, 'resetPassword']);
 Route::get('/verificar-otp-password/{email}/{otp}', [UserController::class, 'verificarOtpPassword']);
 Route::post('/registerWord', [PalabraController::class, 'store']);
+Route::get('/getWords/{letter}', [PalabraController::class, 'getWords']);
 
