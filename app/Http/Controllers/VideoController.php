@@ -107,6 +107,21 @@ class VideoController extends Controller
         }
     }
 
+    function cancelMyAction(Request $request) {
+        $data = $request->input('data');
+
+        $deleted = UserVideo::where('user_id', $data['userID'])
+            ->where('video_id', $data['videoID'])
+            ->where('action', $data['action'])
+            ->delete();
+    
+        if ($deleted > 0) {
+            return response()->json(['message' => 'Acción cancelada exitosamente'], 200);
+        } else {
+            return response()->json(['message' => 'Video no encontrado'], 404);
+        }
+    }
+    
     function reportVideo(Request $request) {
         $data = $request->all();
     
