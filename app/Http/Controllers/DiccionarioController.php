@@ -29,7 +29,7 @@ class DiccionarioController extends Controller
     }
 
     function deleteVideoFromDictionary(Request $request) {
-        $data = $request->all();
+        $data = $request->input('data');
 
         $video = Video::where('id', $data['videoID'])->first();
         $user = User::where('id', $data['userID'])->first();

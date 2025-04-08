@@ -17,8 +17,11 @@ class Significado extends Model
         return $this->hasMany(Video::class);
     }
     
-    public function highestVotedVideo(){
-        return $this->hasOne(Video::class)->orderBy('likes', 'desc');
+    public function highestVotedVideo()
+    {
+        return $this->hasOne(Video::class)
+                    ->withCount('likes')
+                    ->orderBy('likes_count', 'desc');
     }
 
 }
