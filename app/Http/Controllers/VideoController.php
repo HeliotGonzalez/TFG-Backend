@@ -6,15 +6,29 @@ use Illuminate\Http\Request;
 use App\Models\Significado;
 use App\Models\Video;
 use App\Models\Palabra;
+use App\Models\User;
 use App\Models\UserVideo;
 
 class VideoController extends Controller
 {
-    function getVideos($descripcion) {
-        $videos = Video::with('significado')
+    function getVideos($descripcion, $userID) {
+        $videos = Video::with('significado', 'user')
+            ->with(['diccionario' => function($query) use ($userID) {
+                $query->where('user_id', $userID);
+            }])
             ->whereHas('significado', function($query) use ($descripcion) {
                 $query->where('descripcion', $descripcion);
-            })->with('user')->orderBy('likes', 'desc')->get();
+            })
+            ->orderBy('likes', 'desc')
+            ->get();
+    
+        // Recorre cada video para añadir el campo 'inDictionary'
+        $videos->map(function ($video) {
+            // Si la relación 'diccionario' devuelve algún registro, el video está en el diccionario del usuario.
+            $video->inDictionary = $video->diccionario->isNotEmpty();
+            unset($video->diccionario);
+            return $video;
+        });
     
         if ($videos->isEmpty()) {
             return response()->json(['message' => 'No se encontraron videos'], 404);
@@ -70,5 +84,7 @@ class VideoController extends Controller
             $userVideo->save();
         }
     }
+
+
     
 }

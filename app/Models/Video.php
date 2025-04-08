@@ -19,4 +19,9 @@ class Video extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function diccionario()
+    {
+        return $this->hasMany(Diccionario::class);
+    }
 }

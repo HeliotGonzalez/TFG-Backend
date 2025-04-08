@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PalabraController;
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\DiccionarioController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -18,6 +19,10 @@ Route::post('/reset-password', [UserController::class, 'resetPassword']);
 Route::get('/verificar-otp-password/{email}/{otp}', [UserController::class, 'verificarOtpPassword']);
 Route::post('/registerWord', [PalabraController::class, 'store']);
 Route::get('/getWords/{letter}', [PalabraController::class, 'getWords']);
-Route::get('/getVideos/{descripcion}', [VideoController::class, 'getVideos']);
+Route::get('/getVideos/{descripcion}/{userID}', [VideoController::class, 'getVideos']);
 Route::post('/videoLikes', [VideoController::class, 'videoLikes']);
+Route::post('/storeVideoInDictionary', [DiccionarioController::class, 'storeVideoInDictionary']);
+Route::post('/deleteVideoFromDictionary', [DiccionarioController::class, 'deleteVideoFromDictionary']);
+
+
 
