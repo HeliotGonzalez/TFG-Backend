@@ -36,6 +36,7 @@ class VideoController extends Controller
             })
             ->orderBy('likes', 'desc')
             ->get();
+
     
         // Procesar cada video para agregar campos adicionales antes de enviarlo al front
         $videos->map(function ($video) {
@@ -45,6 +46,7 @@ class VideoController extends Controller
             // Determinar la reacción que hizo el usuario (si existe)
             $reaction = $video->userVideos->first();
             $video->myReaction = $reaction ? $reaction->action : null;
+
     
             // Eliminar relaciones innecesarias
             unset($video->diccionario);

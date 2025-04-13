@@ -32,6 +32,7 @@ Route::post('/cancelMyAction', [VideoController::class, 'cancelMyAction']);
 // Funciones referentes a Diccionario
 Route::post('/storeVideoInDictionary', [DiccionarioController::class, 'storeVideoInDictionary']);
 Route::post('/deleteVideoFromDictionary', [DiccionarioController::class, 'deleteVideoFromDictionary']);
+Route::get('/getPersonalDictionary/{userID}', [DiccionarioController::class, 'getPersonalDictionary']);
 
 
 
