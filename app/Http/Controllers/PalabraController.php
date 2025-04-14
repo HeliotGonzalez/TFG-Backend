@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Palabra;
 use App\Models\Significado;
+use App\Models\Etiqueta;
+use App\Models\significadoEtiqueta;
 
 
 class PalabraController extends Controller
@@ -13,14 +15,32 @@ class PalabraController extends Controller
         $nombre = $request->input('nombre');
         $descripcion = $request->input('descripcion');
         $etiquetas = $request->input('etiquetas');
+
     
         try {
             $significado = new Significado();
             $significado->descripcion = $descripcion;
-            $significado->etiquetas = json_encode($etiquetas);
             $significado->save();
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al registrar el significado'], 500);
+        }
+
+        foreach ($etiquetas as $etiqueta){
+            $Etiqueta = Etiqueta::where('nombre', $etiqueta)->first();
+
+            if (!$Etiqueta){
+                $newEtiqueta = new Etiqueta();
+                $newEtiqueta->nombre = $etiqueta;
+                $newEtiqueta->created_at = now();
+                $newEtiqueta->save();
+                $Etiqueta = $newEtiqueta;
+            } 
+
+            $significadoEtiqueta = new significadoEtiqueta();
+            $significadoEtiqueta->significado_id = $significado->id;
+            $significadoEtiqueta->etiqueta_id = $Etiqueta->id;
+            $significadoEtiqueta->created_at = now();
+            $significadoEtiqueta->save();
         }
 
         try {

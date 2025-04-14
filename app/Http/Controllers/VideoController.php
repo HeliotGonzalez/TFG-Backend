@@ -33,7 +33,7 @@ class VideoController extends Controller
             }])
             ->whereHas('significado', function ($query) use ($descripcion) {
                 $query->where('descripcion', $descripcion);
-            })
+            })->with('significado.etiquetas')
             ->orderBy('likes', 'desc')
             ->get();
 

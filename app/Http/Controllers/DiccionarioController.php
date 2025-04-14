@@ -66,6 +66,7 @@ class DiccionarioController extends Controller
             ->with(['userVideos' => function ($query) use ($userID) {
                 $query->where('user_id', $userID);
             }])
+            ->with('significado.etiquetas')
             // Filtra únicamente los videos que tengan una entrada en el diccionario del usuario
             ->whereHas('diccionario', function ($query) use ($userID) {
                 $query->where('user_id', $userID);

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Etiqueta;
 
 class Significado extends Model
 {
@@ -22,6 +23,11 @@ class Significado extends Model
         return $this->hasOne(Video::class)
                     ->withCount('likes')
                     ->orderBy('likes_count', 'desc');
+    }
+
+    public function etiquetas()
+    {
+        return $this->belongsToMany(Etiqueta::class, 'significadoetiquetas', 'significado_id', 'etiqueta_id')->select('etiquetas.nombre');
     }
 
 }
