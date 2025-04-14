@@ -39,5 +39,10 @@ class PalabraController extends Controller
     public function getWords($letter){
         $words = Palabra::with('significado.highestVotedVideo')->where('nombre', 'like', $letter.'%')->get();
         return response()->json($words, 200);
-    }    
+    }
+    
+    function  getVideosByWord($word){
+        $words = Palabra::with('significado.highestVotedVideo')->where('nombre', $word)->get();
+        return response()->json($words, 200);
+    }
 }
