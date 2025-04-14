@@ -42,7 +42,7 @@ class VideoController extends Controller
         $videos->map(function ($video) {
             // Indicar si el video está en el diccionario del usuario
             $video->inDictionary = $video->diccionario->isNotEmpty();
-            
+
             // Determinar la reacción que hizo el usuario (si existe)
             $reaction = $video->userVideos->first();
             $video->myReaction = $reaction ? $reaction->action : null;
@@ -60,6 +60,21 @@ class VideoController extends Controller
         
         return response()->json($videos);
     }
+
+    function store(Request $request) {
+        $data = $request->all();
+        
+        // Buscar el significado en base a la descripción recibida
+        $significado = Significado::where('descripcion', $data['significado'])->first();
+
+        $video = new Video();
+        $video->significado_id = $significado->id;
+        $video->user_id = $data['userID'];
+        $video->url = $data['videoUrl'];
+        $video->save();
+    
+        return response()->json(['message' => 'Video registrado correctamente'], 200);
+    }    
         
     function videoLikes(Request $request) {
         $data = $request->input('data');

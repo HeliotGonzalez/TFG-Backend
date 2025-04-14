@@ -25,6 +25,7 @@ Route::get('/getWords/{letter}', [PalabraController::class, 'getWords']);
 
 // Funciones referentes a Video
 Route::get('/getVideos/{descripcion}/{userID}', [VideoController::class, 'getVideos']);
+Route::post('storeVideo', [VideoController::class, 'store']);
 Route::post('/videoLikes', [VideoController::class, 'videoLikes']);
 Route::post('/reportVideo', [VideoController::class, 'reportVideo']);
 Route::post('/cancelMyAction', [VideoController::class, 'cancelMyAction']);
