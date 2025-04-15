@@ -23,6 +23,7 @@ Route::get('/verificar-otp-password/{email}/{otp}', [UserController::class, 'ver
 Route::post('/registerWord', [PalabraController::class, 'store']);
 Route::get('/getWords/{letter}', [PalabraController::class, 'getWords']);
 Route::get('/getVideosByWord/{word}', [PalabraController::class, 'getVideosByWord']);
+Route::get('/getRandomWords', [PalabraController::class, 'getRandomWords']);
 
 
 // Funciones referentes a Video
