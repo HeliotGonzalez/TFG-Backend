@@ -51,9 +51,6 @@ class DiccionarioController extends Controller
         // Consulta desde el modelo Video, de forma similar a la función getVideos,
         // pero filtrando los videos que estén asociados al diccionario del usuario.
         $videos = Video::with('significado', 'user')
-            ->with(['diccionario' => function ($query) use ($userID) {
-                $query->where('user_id', $userID);
-            }])
             ->withCount([
                 // Contar likes y dislikes (desde la relación userVideos)
                 'userVideos as likes' => function ($query) {
@@ -90,6 +87,34 @@ class DiccionarioController extends Controller
             // Elimina relaciones no necesarias en la respuesta final
             unset($video->diccionario);
             unset($video->userVideos);
+            return $video;
+        });
+    
+        if ($videos->isEmpty()) {
+            return response()->json(['message' => 'No se encontraron videos'], 404);
+        }
+        
+        return response()->json($videos);
+    }
+
+    function testYourself($userID){
+        $videos = Video::with('significado', 'user')
+            ->with(['userVideos' => function ($query) use ($userID) {
+                $query->where('user_id', $userID);
+            }])
+            // Filtra únicamente los videos que tengan una entrada en el diccionario del usuario
+            ->whereHas('diccionario', function ($query) use ($userID) {
+                $query->where('user_id', $userID);
+            })
+            ->get();
+    
+        // Procesa cada video para agregar propiedades adicionales y limpiar la respuesta
+        $videos->map(function ($video) {
+            // Obtener la palabra asociada al significado
+            $palabra = Palabra::where('significado_id', $video->significado_id)->first();
+            // Asignar el nombre de la palabra a la propiedad "palabra"
+            $video->palabra = $palabra ? $palabra->nombre : 'Desconocido';
+
             return $video;
         });
     

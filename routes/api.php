@@ -37,6 +37,7 @@ Route::post('/cancelMyAction', [VideoController::class, 'cancelMyAction']);
 Route::post('/storeVideoInDictionary', [DiccionarioController::class, 'storeVideoInDictionary']);
 Route::post('/deleteVideoFromDictionary', [DiccionarioController::class, 'deleteVideoFromDictionary']);
 Route::get('/getPersonalDictionary/{userID}', [DiccionarioController::class, 'getPersonalDictionary']);
+Route::get('/testYourself/{userID}', [DiccionarioController::class, 'testYourself']);
 
 
 
