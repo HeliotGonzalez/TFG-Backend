@@ -9,6 +9,7 @@ use App\Models\Palabra;
 use App\Models\User;
 use App\Models\Reporte;
 use App\Models\UserVideo;
+use Illuminate\Support\Facades\DB;
 
 class VideoController extends Controller
 {
@@ -187,6 +188,61 @@ class VideoController extends Controller
             return response()->json(['message' => 'No se encontraron videos'], 404);
         }
         
+        return response()->json($videos);
+    }
+
+    public function getVideosByThemes($userID, $tags)
+    {
+        // Aceptar tags como string o array y normalizar a array de strings
+        if (is_string($tags)) {
+            $tagsArray = array_filter(array_map('trim', explode(',', $tags)));
+        } elseif (is_array($tags)) {
+            $tagsArray = array_filter(array_map('trim', $tags));
+        } else {
+            $tagsArray = [];
+        }
+
+        // Normalizar etiquetas a minúsculas para comparación insensible
+        $lowerTags = array_map('strtolower', $tagsArray);
+
+        $videos = Video::with('user')
+            ->withCount([
+                'userVideos as likes' => function ($query) {
+                    $query->where('action', 'like');
+                },
+                'userVideos as dislikes' => function ($query) {
+                    $query->where('action', 'dislike');
+                },
+            ])
+            ->with(['userVideos' => function ($query) use ($userID) {
+                $query->where('user_id', $userID);
+            }])
+            ->with(['diccionario' => function ($query) use ($userID) {
+                $query->where('user_id', $userID);
+            }])->with('significado.etiquetas')
+            // Filtrar por etiquetas case-insensitive en la relación significado.etiquetas
+            ->whereHas('significado.etiquetas', function ($query) use ($lowerTags) {
+                $query->whereIn(DB::raw('LOWER(nombre)'), $lowerTags);
+            })
+            ->latest('created_at')
+            ->limit(50)
+            ->get();
+
+        // Mapear datos adicionales y limpiar relaciones
+        $videos->map(function ($video) {
+            $video->inDictionary = $video->diccionario->isNotEmpty();
+
+            $reaction = $video->userVideos->first();
+            $video->myReaction = $reaction ? $reaction->action : null;
+
+            unset($video->diccionario, $video->userVideos);
+            return $video;
+        });
+
+        if ($videos->isEmpty()) {
+            return response()->json(['message' => 'No se encontraron videos'], 404);
+        }
+
         return response()->json($videos);
     }
     

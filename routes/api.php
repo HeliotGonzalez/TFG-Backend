@@ -6,6 +6,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PalabraController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\DiccionarioController;
+use App\Http\Controllers\EtiquetaController;
+
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -33,12 +35,17 @@ Route::post('/videoLikes', [VideoController::class, 'videoLikes']);
 Route::post('/reportVideo', [VideoController::class, 'reportVideo']);
 Route::post('/cancelMyAction', [VideoController::class, 'cancelMyAction']);
 Route::get('/getRecentlyUploadedVideos/{userID}', [VideoController::class, 'getRecentlyUploadedVideos']);
+Route::get('/getVideosByThemes/{userID}/{tags}', [VideoController::class, 'getVideosByThemes']);
+
 
 // Funciones referentes a Diccionario
 Route::post('/storeVideoInDictionary', [DiccionarioController::class, 'storeVideoInDictionary']);
 Route::post('/deleteVideoFromDictionary', [DiccionarioController::class, 'deleteVideoFromDictionary']);
 Route::get('/getPersonalDictionary/{userID}', [DiccionarioController::class, 'getPersonalDictionary']);
 Route::get('/testYourself/{userID}', [DiccionarioController::class, 'testYourself']);
+
+// Funciones referentes a Etiquetas 
+Route::get('/getTags', [EtiquetaController::class, 'get']);
 
 
 
