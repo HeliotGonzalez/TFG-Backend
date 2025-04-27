@@ -32,6 +32,7 @@ Route::post('storeVideo', [VideoController::class, 'store']);
 Route::post('/videoLikes', [VideoController::class, 'videoLikes']);
 Route::post('/reportVideo', [VideoController::class, 'reportVideo']);
 Route::post('/cancelMyAction', [VideoController::class, 'cancelMyAction']);
+Route::get('/getRecentlyUploadedVideos/{userID}', [VideoController::class, 'getRecentlyUploadedVideos']);
 
 // Funciones referentes a Diccionario
 Route::post('/storeVideoInDictionary', [DiccionarioController::class, 'storeVideoInDictionary']);

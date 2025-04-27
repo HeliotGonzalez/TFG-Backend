@@ -151,6 +151,44 @@ class VideoController extends Controller
     
         return response()->json(['message' => 'Reporte registrado correctamente'], 200);
     }
+
+    function getRecentlyUploadedVideos($userID){
+        $videos = Video::with('user')->latest('created_at')->limit(50)            
+            ->with(['diccionario' => function ($query) use ($userID) {
+                $query->where('user_id', $userID);
+            }])->withCount([
+                'userVideos as likes' => function ($query) {
+                    $query->where('action', 'like');
+                },
+                'userVideos as dislikes' => function ($query) {
+                    $query->where('action', 'dislike');
+                }
+            ])->with(['userVideos' => function ($query) use ($userID) {
+                $query->where('user_id', $userID);
+            }])->with('significado.etiquetas')
+            ->get();
+
+        $videos->map(function ($video) {
+            // Indicar si el video está en el diccionario del usuario
+            $video->inDictionary = $video->diccionario->isNotEmpty();
+
+            // Determinar la reacción que hizo el usuario (si existe)
+            $reaction = $video->userVideos->first();
+            $video->myReaction = $reaction ? $reaction->action : null;
+
+    
+            // Eliminar relaciones innecesarias
+            unset($video->diccionario);
+            unset($video->userVideos);
+            return $video;
+        });
+
+        if ($videos->isEmpty()) {
+            return response()->json(['message' => 'No se encontraron videos'], 404);
+        }
+        
+        return response()->json($videos);
+    }
     
 
 
