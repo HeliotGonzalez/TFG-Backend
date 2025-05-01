@@ -36,7 +36,7 @@ class VideoController extends Controller
                 $query->where('descripcion', $descripcion);
             })->with('significado.etiquetas')
             ->orderBy('likes', 'desc')
-            ->whereNotIn('corregido', [1, 4])
+            ->whereNotIn('corregido', [1, 3])
             ->get();
 
     
@@ -168,7 +168,7 @@ class VideoController extends Controller
                 }
             ])->with(['userVideos' => function ($query) use ($userID) {
                 $query->where('user_id', $userID);
-            }])->with('significado.etiquetas')->whereNotIn('corregido', [1, 4])
+            }])->with('significado.etiquetas')->whereNotIn('corregido', [1, 3])
             ->get();
 
         $videos->map(function ($video) {
@@ -224,7 +224,7 @@ class VideoController extends Controller
             }])->with('significado.etiquetas')
             ->whereHas('significado.etiquetas', function ($query) use ($lowerTags) {
                 $query->whereIn(DB::raw('LOWER(nombre)'), $lowerTags);
-            })->whereNotIn('corregido', [1, 4])
+            })->whereNotIn('corregido', [1, 3])
             ->latest('created_at')
             ->limit(50)
             ->get();
@@ -262,6 +262,11 @@ class VideoController extends Controller
         ->get();
     
         return $videos;    
+    }
+
+    public function getVideosCorrected($userID){
+        $videos = Video::where('user_id', $userID)->where('corregido', 2)->get();
+        return $videos;
     }
 
     public function correctVideo(Request $request){
