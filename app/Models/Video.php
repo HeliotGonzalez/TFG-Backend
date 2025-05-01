@@ -12,7 +12,7 @@ use App\Models\UserVideo;
 class Video extends Model
 {
     protected $table = 'videos';
-    protected $fillable = ['url', 'likes', 'dislikes', 'significado_id', 'user_id'];
+    protected $fillable = ['url', 'significado_id', 'user_id', 'corregido', 'comentario'];
 
 
     public function significado()

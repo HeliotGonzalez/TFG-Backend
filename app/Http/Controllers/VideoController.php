@@ -36,6 +36,7 @@ class VideoController extends Controller
                 $query->where('descripcion', $descripcion);
             })->with('significado.etiquetas')
             ->orderBy('likes', 'desc')
+            ->whereNotIn('corregido', [1, 4])
             ->get();
 
     
@@ -72,6 +73,7 @@ class VideoController extends Controller
         $video->significado_id = $significado->id;
         $video->user_id = $data['userID'];
         $video->url = $data['videoUrl'];
+        $video->corregido = ($data['corregido'] == 'true') ? 1 : 0;
         $video->save();
     
         return response()->json(['message' => 'Video registrado correctamente'], 200);
@@ -166,7 +168,7 @@ class VideoController extends Controller
                 }
             ])->with(['userVideos' => function ($query) use ($userID) {
                 $query->where('user_id', $userID);
-            }])->with('significado.etiquetas')
+            }])->with('significado.etiquetas')->whereNotIn('corregido', [1, 4])
             ->get();
 
         $videos->map(function ($video) {
@@ -220,10 +222,9 @@ class VideoController extends Controller
             ->with(['diccionario' => function ($query) use ($userID) {
                 $query->where('user_id', $userID);
             }])->with('significado.etiquetas')
-            // Filtrar por etiquetas case-insensitive en la relación significado.etiquetas
             ->whereHas('significado.etiquetas', function ($query) use ($lowerTags) {
                 $query->whereIn(DB::raw('LOWER(nombre)'), $lowerTags);
-            })
+            })->whereNotIn('corregido', [1, 4])
             ->latest('created_at')
             ->limit(50)
             ->get();
@@ -244,6 +245,37 @@ class VideoController extends Controller
         }
 
         return response()->json($videos);
+    }
+
+    public function getVideosUncorrected(){
+        $videos = Video::with('significado', 'user')
+        ->withCount([
+            'userVideos as likes' => function ($query) {
+                $query->where('action', 'like');
+            },
+            'userVideos as dislikes' => function ($query) {
+                $query->where('action', 'dislike');
+            }
+        ])->with('significado.etiquetas')
+        ->orderBy('likes', 'desc')
+        ->where('corregido', 1)
+        ->get();
+    
+        return $videos;    
+    }
+
+    public function correctVideo(Request $request){
+        $data = $request->all();
+        $video = Video::where('id', $data['videoId'])->first();
+
+        if ($video) {
+            $video->corregido = ($data['action'] == 'accept') ? 2 : 3;
+            $video->comentario = $data['comment'];
+            $video->save();
+            return response()->json(['message' => 'Video corregido correctamente'], 200);
+        }
+
+        return response()->json(['message' => 'Video no encontrado'], 404);
     }
     
 

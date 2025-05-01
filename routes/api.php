@@ -36,6 +36,8 @@ Route::post('/reportVideo', [VideoController::class, 'reportVideo']);
 Route::post('/cancelMyAction', [VideoController::class, 'cancelMyAction']);
 Route::get('/getRecentlyUploadedVideos/{userID}', [VideoController::class, 'getRecentlyUploadedVideos']);
 Route::get('/getVideosByThemes/{userID}/{tags}', [VideoController::class, 'getVideosByThemes']);
+Route::get('getVideosUncorrected', [VideoController::class, 'getVideosUncorrected']);
+Route::post('/correctVideo', [VideoController::class, 'correctVideo']);
 
 
 // Funciones referentes a Diccionario
