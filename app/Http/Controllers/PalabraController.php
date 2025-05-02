@@ -71,4 +71,9 @@ class PalabraController extends Controller
         $words = Palabra::with('significado.highestVotedVideo')->inRandomOrder()->take(5)->get();
         return response()->json($words, 200);
     }
+
+    public function getRequiredWords(){
+        $words = Palabra::with('significado')->whereDoesntHave('significado.highestVotedVideo')->get();
+        return $words;
+    }
 }

@@ -20,9 +20,7 @@ class Significado extends Model
     
     public function highestVotedVideo()
     {
-        return $this->hasOne(Video::class)
-                    ->withCount('likes')
-                    ->orderBy('likes_count', 'desc');
+        return $this->hasOne(Video::class)->withCount('likes')->orderBy('likes_count', 'desc');
     }
 
     public function etiquetas()
