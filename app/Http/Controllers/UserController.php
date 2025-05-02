@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Video;
 use App\Mail\OtpMail;
 use App\Mail\ForgotPasswordMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
 
@@ -100,7 +100,33 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        // Validar datos
+        $data = $request->validate([
+            'name'       => 'required|string|max:255',
+            'username'   => 'required|string|max:255|unique:users,username,' . $user->id,
+            'email'      => 'required|email|max:255|unique:users,email,' . $user->id,
+            'descricion' => 'nullable|string',
+        ]);
+
+        // Actualizar campos básicos
+        $user->name = $data['name'];
+        $user->username = $data['username'];
+        $user->email = $data['email'];
+        $user->descricion = $data['descricion'] ?? $user->descricion;
+        $user->save();
+
+        /*
+        if ($request->hasFile('avatar')) {
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $user->avatarUrl = asset('storage/' . $path);
+        }
+        */
+
+
+        return response()->json([
+            'message' => 'Perfil actualizado correctamente',
+            'user'    => $user,
+        ]);
     }
 
     /**
@@ -225,5 +251,43 @@ class UserController extends Controller
         $user->save();
     
         return response()->json(['message' => 'Contraseña actualizada correctamente'], 200);
-    }    
+    } 
+    
+    public function getUserData($ownerID, $userID){
+        $user = User::where('id', $ownerID)->first();
+
+        $videos = Video::with('significado', 'user')
+            ->with(['diccionario' => function ($query) use ($userID) {
+                $query->where('user_id', $userID);
+            }])
+            ->withCount(['userVideos as likes' => function ($query) {
+                    $query->where('action', 'like');
+                }, 'userVideos as dislikes' => function ($query) {
+                    $query->where('action', 'dislike');
+                }
+            ])->with(['userVideos' => function ($query) use ($userID) {
+                $query->where('user_id', $userID);
+            }])->with('significado.etiquetas')
+            ->orderBy('likes', 'desc')
+            ->where('user_id', $ownerID)
+            ->whereNotIn('corregido', [1, 3])
+            ->get();
+
+    
+        $videos->map(function ($video) {
+            $video->inDictionary = $video->diccionario->isNotEmpty();
+
+            $reaction = $video->userVideos->first();
+            $video->myReaction = $reaction ? $reaction->action : null;
+
+            unset($video->diccionario);
+            unset($video->userVideos);
+        });
+    
+
+        return response()->json([
+            'user' => $user,
+            'videos' => $videos,
+        ], 200);
+    }
 }

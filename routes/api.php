@@ -20,6 +20,8 @@ Route::post('/verificar-otp', [UserController::class, 'verificarOtp']);
 Route::get('/forgot-password/{email}', [UserController::class, 'forgotPassword']);
 Route::post('/reset-password', [UserController::class, 'resetPassword']);
 Route::get('/verificar-otp-password/{email}/{otp}', [UserController::class, 'verificarOtpPassword']);
+Route::get('/getUserData/{ownerID}/{userID}', [UserController::class, 'getUserData']);
+Route::patch('updateProfile/{user}', [UserController::class, 'update']);
 
 // Funciones referentes a Palabra
 Route::post('/registerWord', [PalabraController::class, 'store']);
