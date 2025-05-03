@@ -290,4 +290,42 @@ class UserController extends Controller
             'videos' => $videos,
         ], 200);
     }
+
+    public function getUserDataByName($username, $userID){
+        $user = User::where('username', $username)->first();
+
+        $videos = Video::with('significado', 'user')
+            ->with(['diccionario' => function ($query) use ($userID) {
+                $query->where('user_id', $userID);
+            }])
+            ->withCount(['userVideos as likes' => function ($query) {
+                    $query->where('action', 'like');
+                }, 'userVideos as dislikes' => function ($query) {
+                    $query->where('action', 'dislike');
+                }
+            ])->with(['userVideos' => function ($query) use ($userID) {
+                $query->where('user_id', $userID);
+            }])->with('significado.etiquetas')
+            ->orderBy('likes', 'desc')
+            ->where('user_id', $user->id)
+            ->whereNotIn('corregido', [1, 3])
+            ->get();
+
+    
+        $videos->map(function ($video) {
+            $video->inDictionary = $video->diccionario->isNotEmpty();
+
+            $reaction = $video->userVideos->first();
+            $video->myReaction = $reaction ? $reaction->action : null;
+
+            unset($video->diccionario);
+            unset($video->userVideos);
+        });
+    
+
+        return response()->json([
+            'user' => $user,
+            'videos' => $videos,
+        ], 200);
+    }
 }
