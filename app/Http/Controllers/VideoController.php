@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Significado;
 use App\Models\Video;
-use App\Models\Palabra;
-use App\Models\User;
+use App\Models\Amigo;
 use App\Models\Reporte;
 use App\Models\UserVideo;
 use Illuminate\Support\Facades\DB;
@@ -282,8 +281,57 @@ class VideoController extends Controller
 
         return response()->json(['message' => 'Video no encontrado'], 404);
     }
-    
 
+    public function getMyFriendsVideos(int $userID)
+    {
+        /** 1) IDs de amigos aceptados (en ambos sentidos) */
+        $friendIds = Amigo::where('status', 'accepted')
+            ->where(function ($q) use ($userID) {
+                $q->where('user_id', $userID)
+                ->orWhere('amigo_id', $userID);
+            })
+            // Elegimos “el otro” ID: si yo soy user_id, devuélveme amigo_id, y viceversa
+            ->selectRaw("CASE WHEN user_id = ? THEN amigo_id ELSE user_id END AS amigo_id", [$userID])
+            ->pluck('amigo_id')
+            ->unique()
+            ->values();
 
-    
+        if ($friendIds->isEmpty()) {
+            return response()->json(['message' => 'No tienes amigos aceptados'], 404);
+        }
+
+        /** 2) Vídeos de esos amigos */
+        $videos = Video::with('user', 'significado.etiquetas')
+            // totales de likes / dislikes
+            ->withCount([
+                'userVideos as likes' => fn($q) => $q->where('action', 'like'),
+                'userVideos as dislikes' => fn($q) => $q->where('action', 'dislike'),
+            ])
+            // mi reacción
+            ->with(['userVideos' => fn($q) => $q->where('user_id', $userID)])
+            // si está en mi diccionario
+            ->with(['diccionario' => fn($q) => $q->where('user_id', $userID)])
+            ->whereIn('user_id', $friendIds)
+            ->whereNotIn('corregido', [1, 3])      // 1=pte, 3=rechazado
+            ->latest('created_at')
+            ->get();
+
+        /** 3) Post-procesado para el front */
+        $videos->map(function ($video) {
+            $video->inDictionary = $video->diccionario->isNotEmpty();
+
+            $reaction = $video->userVideos->first();
+            $video->myReaction = $reaction ? $reaction->action : null;
+
+            unset($video->diccionario, $video->userVideos);
+            return $video;
+        });
+
+        if ($videos->isEmpty()) {
+            return response()->json(['message' => 'Tus amigos aún no han subido vídeos'], 404);
+        }
+
+        return response()->json($videos);
+    }
+
 }

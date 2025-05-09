@@ -43,6 +43,8 @@ Route::get('/getVideosByThemes/{userID}/{tags}', [VideoController::class, 'getVi
 Route::get('/getVideosUncorrected', [VideoController::class, 'getVideosUncorrected']);
 Route::get('/getVideosCorrected/{userID}', [VideoController::class, 'getVideosCorrected']);
 Route::post('/correctVideo', [VideoController::class, 'correctVideo']);
+Route::get('/getMyFriendsVideos/{userID}', [VideoController::class, 'getMyFriendsVideos']);
+
 
 // Funciones referentes a Diccionario
 Route::post('/storeVideoInDictionary', [DiccionarioController::class, 'storeVideoInDictionary']);
