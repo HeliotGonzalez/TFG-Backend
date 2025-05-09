@@ -7,6 +7,7 @@ use App\Http\Controllers\PalabraController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\DiccionarioController;
 use App\Http\Controllers\EtiquetaController;
+use App\Http\Controllers\AmigoController;
 
 
 Route::get('/user', function (Request $request) {
@@ -44,8 +45,6 @@ Route::get('/getVideosUncorrected', [VideoController::class, 'getVideosUncorrect
 Route::get('/getVideosCorrected/{userID}', [VideoController::class, 'getVideosCorrected']);
 Route::post('/correctVideo', [VideoController::class, 'correctVideo']);
 
-
-
 // Funciones referentes a Diccionario
 Route::post('/storeVideoInDictionary', [DiccionarioController::class, 'storeVideoInDictionary']);
 Route::post('/deleteVideoFromDictionary', [DiccionarioController::class, 'deleteVideoFromDictionary']);
@@ -54,6 +53,15 @@ Route::get('/testYourself/{userID}', [DiccionarioController::class, 'testYoursel
 
 // Funciones referentes a Etiquetas 
 Route::get('/getTags', [EtiquetaController::class, 'get']);
+
+// Funciones referentes a Amigos
+Route::get('/getPendingFriendRequest/{to}', [AmigoController::class, 'getPendingFriendRequest']);
+Route::post('/sendFriendRequest', [AmigoController::class, 'sendFriendRequest']);
+Route::get('/amIBeingAddedByOwner/{from}/{to}', [AmigoController::class, 'amIBeingAddedByOwner']);
+Route::get('/isMyFriend/{from}/{to}', [AmigoController::class, 'isMyFriend']);
+Route::post('/acceptFriend', [AmigoController::class, 'acceptFriend']);
+Route::post('/denyRequest', [AmigoController::class, 'denyRequest']);
+
 
 
 

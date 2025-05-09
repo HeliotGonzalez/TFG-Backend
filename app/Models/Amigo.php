@@ -11,10 +11,7 @@ class Amigo extends Model
 {
     protected $table = 'amigos';
 
-    protected $fillable = [
-        'user_id',
-        'amigo_id',
-    ];
+    protected $fillable = ['user_id', 'amigo_id','status'];
 
     public function user()
     {
