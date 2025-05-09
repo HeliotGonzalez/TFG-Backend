@@ -14,6 +14,8 @@ class VideoController extends Controller
 {
     function getVideos($descripcion, $userID)
     {
+        $descripcion = urldecode($descripcion);
+        
         $videos = Video::with('significado', 'user')
             ->with(['diccionario' => function ($query) use ($userID) {
                 $query->where('user_id', $userID);

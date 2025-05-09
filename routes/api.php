@@ -28,12 +28,11 @@ Route::get('/getUserDataByName/{username}/{userID}', [UserController::class, 'ge
 // Funciones referentes a Palabra
 Route::post('/registerWord', [PalabraController::class, 'store']);
 Route::get('/getWords/{letter}', [PalabraController::class, 'getWords']);
-Route::get('/getWords/{letter}', [PalabraController::class, 'getWords']);
 Route::get('/getRequiredWords', [PalabraController::class, 'getRequiredWords']);
 Route::get('/getRandomWords', [PalabraController::class, 'getRandomWords']);
 
 // Funciones referentes a Video
-Route::get('/getVideos/{descripcion}/{userID}', [VideoController::class, 'getVideos']);
+Route::get('getVideos/{userID}/{descripcion}',[VideoController::class, 'getVideos'])->where('descripcion', '.*');
 Route::post('storeVideo', [VideoController::class, 'store']);
 Route::post('/videoLikes', [VideoController::class, 'videoLikes']);
 Route::post('/reportVideo', [VideoController::class, 'reportVideo']);
