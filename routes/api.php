@@ -32,7 +32,6 @@ Route::get('/getWords/{letter}', [PalabraController::class, 'getWords']);
 Route::get('/getRequiredWords', [PalabraController::class, 'getRequiredWords']);
 Route::get('/getRandomWords', [PalabraController::class, 'getRandomWords']);
 
-
 // Funciones referentes a Video
 Route::get('/getVideos/{descripcion}/{userID}', [VideoController::class, 'getVideos']);
 Route::post('storeVideo', [VideoController::class, 'store']);
@@ -61,6 +60,8 @@ Route::get('/amIBeingAddedByOwner/{from}/{to}', [AmigoController::class, 'amIBei
 Route::get('/isMyFriend/{from}/{to}', [AmigoController::class, 'isMyFriend']);
 Route::post('/acceptFriend', [AmigoController::class, 'acceptFriend']);
 Route::post('/denyRequest', [AmigoController::class, 'denyRequest']);
+Route::get('/getNotFriendsUsers/{userID}', [AmigoController::class, 'getNotFriendsUsers']);
+
 
 
 

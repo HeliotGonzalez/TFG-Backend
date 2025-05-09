@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use App\Models\Amigo;
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
 class AmigoController extends Controller
@@ -87,5 +88,14 @@ class AmigoController extends Controller
         $amigo->save();
 
         return response()->json(['status'  => 'success','message' => 'Friend request accepted.'], 200);
+    }
+
+    public function getNotFriendsUsers($userID){
+        $sent = Amigo::where('user_id', $userID)->where('status', 'accepted')->pluck('amigo_id')->toArray();
+
+        $received = Amigo::where('amigo_id', $userID)->where('status', 'accepted')->pluck('user_id')->toArray();
+
+        $exclude = array_unique(array_merge($sent, $received, [$userID]));
+        return User::whereNotIn('id', $exclude)->get();
     }
 }
