@@ -57,7 +57,16 @@ class AmigoController extends Controller
 
     public function acceptFriend(Request $request){
         $data = $request->all();
-        $amigo = Amigo::where('user_id',  $data['from'])->where('amigo_id', $data['to'])->where('status', 'pending')->first();
+        $amigo = Amigo::where(function ($q) use ($data) {
+            $q->where('user_id',  $data['from'])
+                ->where('amigo_id', $data['to']);
+            })
+            ->orWhere(function ($q) use ($data) {
+                $q->where('user_id',  $data['to'])
+                ->where('amigo_id', $data['from']);
+            })
+            ->where('status', 'pending')
+            ->first();
     
         if (! $amigo) {
             return response()->json(['status' => 'error', 'message' => 'Friend request not found or already handled.'], 404);
@@ -67,11 +76,12 @@ class AmigoController extends Controller
         $amigo->save();
 
         Redis::publish('friend-accepted', json_encode([
-            'type' => 'friend-accepted',
-            'to'   => 25,
-            'from' => 24,
-            'status' => 'accepted'
+            'type'   => 'friend-accepted',
+            'to'     => $data['from'],
+            'from'   => $data['to'],
+            'status' => 'accepted',
         ]));
+        
         return response()->json(['status'  => 'success','message' => 'Friend request accepted.'], 200);
     }
 
