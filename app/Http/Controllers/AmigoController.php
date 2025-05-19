@@ -108,4 +108,18 @@ class AmigoController extends Controller
         $exclude = array_unique(array_merge($sent, $received, [$userID]));
         return User::whereNotIn('id', $exclude)->get();
     }
+
+    public function getFriends($userID)
+    {
+        // IDs de los que yo he enviado y de los que me han enviado peticiones aceptadas
+        $sent     = Amigo::where('user_id',  $userID)->where('status','accepted')->pluck('amigo_id');
+        $received = Amigo::where('amigo_id', $userID)->where('status','accepted')->pluck('user_id');
+
+        // Unir, filtrar mi propio ID y quitar duplicados
+        $friendIds = $sent->merge($received)->filter(fn($id) => $id !== $userID)->unique()->values()->all();
+
+        // Devolver colección User de esos IDs
+        return User::whereIn('id', $friendIds)->get();
+    }
+
 }

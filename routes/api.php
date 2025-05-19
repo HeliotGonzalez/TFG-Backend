@@ -8,6 +8,7 @@ use App\Http\Controllers\VideoController;
 use App\Http\Controllers\DiccionarioController;
 use App\Http\Controllers\EtiquetaController;
 use App\Http\Controllers\AmigoController;
+use App\Http\Controllers\ChatController;
 
 
 Route::get('/user', function (Request $request) {
@@ -62,8 +63,10 @@ Route::get('/isMyFriend/{from}/{to}', [AmigoController::class, 'isMyFriend']);
 Route::post('/acceptFriend', [AmigoController::class, 'acceptFriend']);
 Route::post('/denyRequest', [AmigoController::class, 'denyRequest']);
 Route::get('/getNotFriendsUsers/{userID}', [AmigoController::class, 'getNotFriendsUsers']);
+Route::get('/getFriends/{userID}', [AmigoController::class, 'getFriends']);
 
 
-
-
+// Funciones referentes a Chat
+Route::get('/getMyConversations/{userID}', [ChatController::class, 'getMyConversations']);
+Route::post('/sendMessage', [ChatController::class, 'sendMessage']);
 
