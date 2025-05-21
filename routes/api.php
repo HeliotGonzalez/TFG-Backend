@@ -44,6 +44,7 @@ Route::get('/getVideosUncorrected', [VideoController::class, 'getVideosUncorrect
 Route::get('/getVideosCorrected/{userID}', [VideoController::class, 'getVideosCorrected']);
 Route::post('/correctVideo', [VideoController::class, 'correctVideo']);
 Route::get('/getMyFriendsVideos/{userID}', [VideoController::class, 'getMyFriendsVideos']);
+Route::get('/getExpertStatData', [VideoController::class, 'getExpertStatData']);
 
 
 // Funciones referentes a Diccionario

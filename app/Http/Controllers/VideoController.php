@@ -6,8 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\Significado;
 use App\Models\Video;
 use App\Models\Amigo;
+use App\Models\Palabra;
 use App\Models\Reporte;
 use App\Models\UserVideo;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class VideoController extends Controller
@@ -334,6 +336,35 @@ class VideoController extends Controller
         }
 
         return response()->json($videos);
+    }
+
+    public function getExpertStatData(){
+        $videosPerUser = Video::select('user_id', DB::raw('count(*) as total'))
+            ->groupBy('user_id')
+            ->orderBy('total', 'desc')
+            ->limit(3)
+            ->with('user:id,name')
+            ->get();
+
+        $totalVideos = Video::count();
+
+        $totalVideosLastMonth = $this->videosOfLastMonth();
+        $totalWords = Palabra::count();
+
+        $videosUncorrected = $this->getVideosUncorrected();
+        $totalUncorrected  = $videosUncorrected->count();
+
+        return [$videosPerUser, $totalVideos, $totalVideosLastMonth, $totalWords, $totalUncorrected];
+    }
+
+    // Sección de funciones privadas
+    private function videosOfLastMonth(){
+        $lastMonth       = Carbon::now()->subMonth();
+        $yearOfLastMonth = $lastMonth->year;
+        $monthOfLastMonth = $lastMonth->month;
+
+        $totalVideosLastMonth = Video::whereYear('created_at', $yearOfLastMonth)->whereMonth('created_at', $monthOfLastMonth)->count();
+        return $totalVideosLastMonth;
     }
 
 }
