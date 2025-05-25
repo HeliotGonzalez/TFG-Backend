@@ -9,6 +9,7 @@ use App\Http\Controllers\DiccionarioController;
 use App\Http\Controllers\EtiquetaController;
 use App\Http\Controllers\AmigoController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\SuggestionController;
 
 
 Route::get('/user', function (Request $request) {
@@ -72,4 +73,7 @@ Route::get('/getFriends/{userID}', [AmigoController::class, 'getFriends']);
 // Funciones referentes a Chat
 Route::get('/getMyConversations/{userID}', [ChatController::class, 'getMyConversations']);
 Route::post('/sendMessage', [ChatController::class, 'sendMessage']);
+
+// Funciones referentes a Sugerencias
+Route::post('/sendSuggestion', [SuggestionController::class, 'sendSuggestion']);
 
