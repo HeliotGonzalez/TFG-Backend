@@ -31,6 +31,8 @@ Route::post('/registerWord', [PalabraController::class, 'store']);
 Route::get('/getWords/{letter}', [PalabraController::class, 'getWords']);
 Route::get('/getRequiredWords', [PalabraController::class, 'getRequiredWords']);
 Route::get('/getRandomWords', [PalabraController::class, 'getRandomWords']);
+Route::get('/getVideosByWord/{word}', [PalabraController::class, 'getVideosByWord']);
+
 
 // Funciones referentes a Video
 Route::get('getVideos/{userID}/{descripcion}',[VideoController::class, 'getVideos'])->where('descripcion', '.*');
