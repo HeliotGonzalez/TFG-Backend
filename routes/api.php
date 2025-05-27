@@ -43,7 +43,7 @@ Route::post('/reportVideo', [VideoController::class, 'reportVideo']);
 Route::post('/cancelMyAction', [VideoController::class, 'cancelMyAction']);
 Route::get('/getRecentlyUploadedVideos/{userID}', [VideoController::class, 'getRecentlyUploadedVideos']);
 Route::get('/getVideosByThemes/{userID}/{tags}', [VideoController::class, 'getVideosByThemes']);
-Route::get('/getVideosUncorrected', [VideoController::class, 'getVideosUncorrected']);
+Route::get('/getVideosUncorrected/{userID}', [VideoController::class, 'getVideosUncorrected']);
 Route::get('/getVideosCorrected/{userID}', [VideoController::class, 'getVideosCorrected']);
 Route::post('/correctVideo', [VideoController::class, 'correctVideo']);
 Route::get('/getMyFriendsVideos/{userID}', [VideoController::class, 'getMyFriendsVideos']);

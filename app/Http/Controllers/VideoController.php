@@ -250,7 +250,7 @@ class VideoController extends Controller
         return response()->json($videos);
     }
 
-    public function getVideosUncorrected(){
+    public function getVideosUncorrected($userID = null){
         $videos = Video::with('significado', 'user')
         ->withCount([
             'userVideos as likes' => function ($query) {
@@ -259,7 +259,7 @@ class VideoController extends Controller
             'userVideos as dislikes' => function ($query) {
                 $query->where('action', 'dislike');
             }
-        ])->with('significado.etiquetas')
+        ])->with('significado.etiquetas')->where('user_id', '!=', $userID)
         ->orderBy('likes', 'desc')
         ->where('corregido', 1)
         ->get();
