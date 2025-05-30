@@ -10,6 +10,7 @@ use App\Models\Palabra;
 use App\Models\Reporte;
 use App\Models\UserVideo;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\DB;
 
 class VideoController extends Controller
@@ -39,7 +40,7 @@ class VideoController extends Controller
                 $query->where('descripcion', $descripcion);
             })->with('significado.etiquetas')
             ->orderBy('likes', 'desc')
-            ->whereNotIn('corregido', [1, 3])
+            ->whereNotIn('corregido', [1, 3, 5])
             ->get();
 
     
@@ -171,7 +172,7 @@ class VideoController extends Controller
                 }
             ])->with(['userVideos' => function ($query) use ($userID) {
                 $query->where('user_id', $userID);
-            }])->with('significado.etiquetas')->whereNotIn('corregido', [1, 3])
+            }])->with('significado.etiquetas')->whereNotIn('corregido', [1, 3, 5])
             ->get();
 
         $videos->map(function ($video) {
@@ -227,7 +228,7 @@ class VideoController extends Controller
             }])->with('significado.etiquetas')
             ->whereHas('significado.etiquetas', function ($query) use ($lowerTags) {
                 $query->whereIn(DB::raw('LOWER(nombre)'), $lowerTags);
-            })->whereNotIn('corregido', [1, 3])
+            })->whereNotIn('corregido', [1, 3, 5])
             ->latest('created_at')
             ->limit(50)
             ->get();
@@ -267,8 +268,19 @@ class VideoController extends Controller
         return $videos;    
     }
 
-    public function getVideosCorrected($userID){
-        $videos = Video::where('user_id', $userID)->where('corregido', 2)->get();
+    public function getVideosCorrected($userID)
+    {
+        $videos = Video::where('user_id', $userID)->whereIn('corregido', [2, 3, 4, 5])->get();
+
+        foreach ($videos as $video) {
+            if ($video->corregido == 2) $video->corregido = 4;
+            if ($video->corregido == 3) $video->corregido = 5;
+            
+            if ($video->isDirty('corregido')) {
+                $video->save();
+            }
+        }
+
         return $videos;
     }
 
@@ -280,6 +292,16 @@ class VideoController extends Controller
             $video->corregido = ($data['action'] == 'accept') ? 2 : 3;
             $video->comentario = $data['comment'];
             $video->save();
+
+            Redis::publish('video-corrected', json_encode([
+                'from' => $video->user_id,
+                'to' => $video->user_id,
+                'video_id' => $video->id,
+                'user_id' => $video->user_id,
+                'action' => $data['action'],
+                'comment' => $data['comment']
+            ]));
+
             return response()->json(['message' => 'Video corregido correctamente'], 200);
         }
 
@@ -316,7 +338,7 @@ class VideoController extends Controller
             // si está en mi diccionario
             ->with(['diccionario' => fn($q) => $q->where('user_id', $userID)])
             ->whereIn('user_id', $friendIds)
-            ->whereNotIn('corregido', [1, 3])      // 1=pte, 3=rechazado
+            ->whereNotIn('corregido', [1, 3, 5])
             ->latest('created_at')
             ->get();
 
@@ -365,6 +387,11 @@ class VideoController extends Controller
 
         $totalVideosLastMonth = Video::whereYear('created_at', $yearOfLastMonth)->whereMonth('created_at', $monthOfLastMonth)->count();
         return $totalVideosLastMonth;
+    }
+
+    public function getUnseenVideosCorrected($userID){
+        $videos = Video::whereIn('corregido', [2, 3])->where('user_id', $userID)->get();
+        return $videos;
     }
 
 }

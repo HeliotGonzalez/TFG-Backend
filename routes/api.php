@@ -45,6 +45,7 @@ Route::get('/getRecentlyUploadedVideos/{userID}', [VideoController::class, 'getR
 Route::get('/getVideosByThemes/{userID}/{tags}', [VideoController::class, 'getVideosByThemes']);
 Route::get('/getVideosUncorrected/{userID}', [VideoController::class, 'getVideosUncorrected']);
 Route::get('/getVideosCorrected/{userID}', [VideoController::class, 'getVideosCorrected']);
+Route::get('/getUnseenVideosCorrected/{userID}', [VideoController::class, 'getUnseenVideosCorrected']);
 Route::post('/correctVideo', [VideoController::class, 'correctVideo']);
 Route::get('/getMyFriendsVideos/{userID}', [VideoController::class, 'getMyFriendsVideos']);
 Route::get('/getExpertStatData', [VideoController::class, 'getExpertStatData']);

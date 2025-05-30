@@ -270,7 +270,7 @@ class UserController extends Controller
             }])->with('significado.etiquetas')
             ->orderBy('likes', 'desc')
             ->where('user_id', $ownerID)
-            ->whereNotIn('corregido', [1, 3])
+            ->whereNotIn('corregido', [1, 3, 5])
             ->get();
 
     
@@ -308,7 +308,7 @@ class UserController extends Controller
             }])->with('significado.etiquetas')
             ->orderBy('likes', 'desc')
             ->where('user_id', $user->id)
-            ->whereNotIn('corregido', [1, 3])
+            ->whereNotIn('corregido', [1, 3, 5])
             ->get();
 
     
