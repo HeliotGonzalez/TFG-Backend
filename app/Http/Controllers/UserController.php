@@ -148,11 +148,8 @@ class UserController extends Controller
         }
         
         if ($user && Hash::check($password, $user->password)) {
-            // Las credenciales son correctas
-            // Puedes proceder a generar un token o iniciar sesión, etc.
             return $user;
         } else {
-            // Credenciales incorrectas
             return 1;
         }
         

@@ -10,6 +10,7 @@ use App\Http\Controllers\EtiquetaController;
 use App\Http\Controllers\AmigoController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DailyChallengeController;
+use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\SuggestionController;
 
 
@@ -50,6 +51,7 @@ Route::get('/getUnseenVideosCorrected/{userID}', [VideoController::class, 'getUn
 Route::post('/correctVideo', [VideoController::class, 'correctVideo']);
 Route::get('/getMyFriendsVideos/{userID}', [VideoController::class, 'getMyFriendsVideos']);
 Route::get('/getExpertStatData', [VideoController::class, 'getExpertStatData']);
+Route::patch('/banVideo', [VideoController::class, 'banVideo']);
 
 
 // Funciones referentes a Diccionario
@@ -85,4 +87,7 @@ Route::post('/sendSuggestion', [SuggestionController::class, 'sendSuggestion']);
 // Funciones referentes a DailyChallenge
 Route::get('/checkLastDailyChallenge/{userID}', [DailyChallengeController::class, 'checkLastDailyChallenge']);
 Route::post('/sendResults', [DailyChallengeController::class, 'sendResults']);
+
+// Funciones referentes a Reportes
+Route::get('/getAllReports', [ReporteController::class, 'getAllReports']);
 

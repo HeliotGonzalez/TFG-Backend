@@ -397,4 +397,14 @@ class VideoController extends Controller
         return $videos;
     }
 
+    public function banVideo(Request $request){
+        $data = $request->all();
+        $video = Video::where('id', $data['id'])->first();
+        if ($video) {
+            $video->corregido = 5;
+            $video->save();
+
+            return response()->json(['message' => 'Video baneado correctamente'], 200);
+        }
+    }
 }
