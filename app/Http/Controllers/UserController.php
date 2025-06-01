@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Video;
 use App\Mail\OtpMail;
 use App\Mail\ForgotPasswordMail;
+use App\Models\Amigo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -283,11 +284,14 @@ class UserController extends Controller
             unset($video->diccionario);
             unset($video->userVideos);
         });
+
+        $NAmigos = Amigo::where('user_id', $userID)->orWhere('amigo_id', $userID)->count();
     
 
         return response()->json([
             'user' => $user,
             'videos' => $videos,
+            'NAmigos' => $NAmigos
         ], 200);
     }
 
