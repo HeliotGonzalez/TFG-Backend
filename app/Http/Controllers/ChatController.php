@@ -36,4 +36,12 @@ class ChatController extends Controller
 
         return response()->json(['status' => 'ok']);
     }
+
+    public function markChatAsRead(Request $request){
+        $data = $request->all();
+        
+        Chat::where('from', $data['from'])->where('to', $data['to'])->where('read', false)->update(['read' => true]);
+
+        return response()->json(['status' => 'ok']);
+    }
 }

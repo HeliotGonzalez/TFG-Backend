@@ -77,6 +77,7 @@ Route::get('/getFriends/{userID}', [AmigoController::class, 'getFriends']);
 // Funciones referentes a Chat
 Route::get('/getMyConversations/{userID}', [ChatController::class, 'getMyConversations']);
 Route::post('/sendMessage', [ChatController::class, 'sendMessage']);
+Route::patch('/markChatAsRead', [ChatController::class, 'markChatAsRead']);
 
 // Funciones referentes a Sugerencias
 Route::post('/sendSuggestion', [SuggestionController::class, 'sendSuggestion']);
