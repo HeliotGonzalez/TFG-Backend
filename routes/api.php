@@ -90,4 +90,6 @@ Route::post('/sendResults', [DailyChallengeController::class, 'sendResults']);
 
 // Funciones referentes a Reportes
 Route::get('/getAllReports', [ReporteController::class, 'getAllReports']);
+Route::patch('/hideReport', [ReporteController::class, 'hideReport']);
+
 
