@@ -400,6 +400,8 @@ class VideoController extends Controller
     public function banVideo(Request $request){
         $data = $request->all();
         $video = Video::where('id', $data['id'])->first();
+        Reporte::where('id', $data['reportID'])->update(['estado' => true]);
+
         if ($video) {
             $video->corregido = 5;
             $video->save();
