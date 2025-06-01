@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Significado;
 use App\Models\Video;
+use App\Models\User;
 use App\Models\Amigo;
 use App\Models\Palabra;
 use App\Models\Reporte;
@@ -376,7 +377,9 @@ class VideoController extends Controller
         $videosUncorrected = $this->getVideosUncorrected();
         $totalUncorrected  = $videosUncorrected->count();
 
-        return [$videosPerUser, $totalVideos, $totalVideosLastMonth, $totalWords, $totalUncorrected];
+        $users = User::select('username', 'points')->orderBy('points', 'desc')->limit(3)->get();
+
+        return [$videosPerUser, $totalVideos, $totalVideosLastMonth, $totalWords, $totalUncorrected, $users];
     }
 
     // Sección de funciones privadas
