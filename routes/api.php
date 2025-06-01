@@ -9,6 +9,7 @@ use App\Http\Controllers\DiccionarioController;
 use App\Http\Controllers\EtiquetaController;
 use App\Http\Controllers\AmigoController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\DailyChallengeController;
 use App\Http\Controllers\SuggestionController;
 
 
@@ -56,6 +57,8 @@ Route::post('/storeVideoInDictionary', [DiccionarioController::class, 'storeVide
 Route::post('/deleteVideoFromDictionary', [DiccionarioController::class, 'deleteVideoFromDictionary']);
 Route::get('/getPersonalDictionary/{userID}', [DiccionarioController::class, 'getPersonalDictionary']);
 Route::get('/testYourself/{userID}', [DiccionarioController::class, 'testYourself']);
+Route::get('/getDailyChallenge', [DiccionarioController::class, 'getDailyChallenge']);
+
 
 // Funciones referentes a Etiquetas 
 Route::get('/getTags', [EtiquetaController::class, 'get']);
@@ -77,4 +80,8 @@ Route::post('/sendMessage', [ChatController::class, 'sendMessage']);
 
 // Funciones referentes a Sugerencias
 Route::post('/sendSuggestion', [SuggestionController::class, 'sendSuggestion']);
+
+// Funciones referentes a DailyChallenge
+Route::get('/checkLastDailyChallenge/{userID}', [DailyChallengeController::class, 'checkLastDailyChallenge']);
+Route::post('/sendResults', [DailyChallengeController::class, 'sendResults']);
 

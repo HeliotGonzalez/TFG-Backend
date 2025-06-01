@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Video;
 use App\Models\Diccionario;
 use App\Models\Palabra;
+use App\Models\DailyChallenge;
+
 
 
 class DiccionarioController extends Controller
@@ -124,5 +127,20 @@ class DiccionarioController extends Controller
         
         return response()->json($videos);
     }
-    
+
+    public function getDailyChallenge(){
+        $rows = DailyChallenge::with(['palabra', 'video'])->whereDate('created_at', Carbon::today())->get();
+
+        if ($rows->isEmpty()) {
+            return response()->json(['message' => 'No hay reto diario disponible'], 404);
+        }
+
+        $payload = $rows->map(fn ($row) => [
+            'palabra'   => $row->palabra->nombre,
+            'video_url' => $row->video->url,
+            'video_id'  => $row->video_id 
+        ]);
+
+        return response()->json($payload);
+    }
 }
