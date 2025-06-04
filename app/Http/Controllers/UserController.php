@@ -18,9 +18,14 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $perPage = (int) $request->input('per_page', 10);
+
+        return response()->json(
+            User::orderByDesc('id')->where('role_id', '!=', 4)->where('banned', false)->paginate($perPage),
+            200
+        );
     }
 
     /**
@@ -140,7 +145,7 @@ class UserController extends Controller
 
     public function getUser($email, $password)
     {
-        $user = User::where('email', $email)->first();
+        $user = User::where('email', $email)->where('banned', false)->first();
         
         //Verificar si la cuenta está verificada
         if (!$user->email_verified_at) {
@@ -328,5 +333,25 @@ class UserController extends Controller
             'user' => $user,
             'videos' => $videos,
         ], 200);
+    }
+
+    public function banUser(Request $request)
+    {
+        $data = $request->all();
+
+        $administrator = User::find($data['userID']);
+        if ($administrator->role_id != 4){
+            return response()->json(['error' => 'No tiene estos permisos'], 404);
+        }
+        
+        $user = User::find($data['id']);
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+        
+        $user->banned = true;
+        $user->save();
+        
+        return response()->json(['message' => 'Usuario actualizado correctamente'], 200);
     }
 }

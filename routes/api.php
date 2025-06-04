@@ -28,6 +28,8 @@ Route::get('/verificar-otp-password/{email}/{otp}', [UserController::class, 'ver
 Route::get('/getUserData/{ownerID}/{userID}', [UserController::class, 'getUserData']);
 Route::patch('updateProfile/{user}', [UserController::class, 'update']);
 Route::get('/getUserDataByName/{username}/{userID}', [UserController::class, 'getUserDataByName']);
+Route::get('/users', [UserController::class, 'index']);
+Route::patch('banUser', [UserController::class, 'banUser']);
 
 // Funciones referentes a Palabra
 Route::post('/registerWord', [PalabraController::class, 'store']);
