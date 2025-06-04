@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('reportes', function (Blueprint $table) {
-            $table->boolean('done')->default(false)->after('contenido');
+            $table->boolean('banned')->default(false)->after('contenido');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('reportes', function (Blueprint $table) {
-            $table->dropColumn('done');
+            $table->dropColumn('banned');
         });
     }
 };

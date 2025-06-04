@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Reporte extends Model
 {
     protected $table = 'reportes';
-    protected $fillable = ['video_id', 'user_id', 'contenido', 'estado'];
+    protected $fillable = ['video_id', 'user_id', 'contenido', 'estado', 'banned'];
 
     public function video()
     {
