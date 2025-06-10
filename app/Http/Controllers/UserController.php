@@ -147,7 +147,6 @@ class UserController extends Controller
     {
         $user = User::where('email', $email)->where('banned', false)->first();
         
-        //Verificar si la cuenta está verificada
         if (!$user->email_verified_at) {
             return response()->json(['error' => 'La cuenta no ha sido verificada'], 403);
         }

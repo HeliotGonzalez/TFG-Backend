@@ -85,6 +85,8 @@ Route::patch('/markChatAsRead', [ChatController::class, 'markChatAsRead']);
 
 // Funciones referentes a Sugerencias
 Route::post('/sendSuggestion', [SuggestionController::class, 'sendSuggestion']);
+Route::get('/suggestions', [SuggestionController::class, 'index']);
+Route::patch('/hideSuggestion', [SuggestionController::class, 'hideSuggestion']);
 
 // Funciones referentes a DailyChallenge
 Route::get('/checkLastDailyChallenge/{userID}', [DailyChallengeController::class, 'checkLastDailyChallenge']);
