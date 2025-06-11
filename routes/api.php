@@ -11,8 +11,9 @@ use App\Http\Controllers\AmigoController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DailyChallengeController;
 use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\SignificadoPropuestoController;
 use App\Http\Controllers\SuggestionController;
-
+use App\Models\significado_propuesto;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -37,6 +38,8 @@ Route::get('/getWords/{letter}', [PalabraController::class, 'getWords']);
 Route::get('/getRequiredWords', [PalabraController::class, 'getRequiredWords']);
 Route::get('/getRandomWords', [PalabraController::class, 'getRandomWords']);
 Route::get('/getVideosByWord/{word}', [PalabraController::class, 'getVideosByWord']);
+Route::patch('/updateWord', [PalabraController::class, 'updateWord']);
+
 
 
 // Funciones referentes a Video
@@ -95,5 +98,12 @@ Route::post('/sendResults', [DailyChallengeController::class, 'sendResults']);
 // Funciones referentes a Reportes
 Route::get('/getAllReports', [ReporteController::class, 'getAllReports']);
 Route::patch('/hideReport', [ReporteController::class, 'hideReport']);
+
+// Funciones referentes a significado_propuesto
+Route::get('/newMeanings', [SignificadoPropuestoController::class, 'getNewMeanings']);
+Route::delete('/rejectMeaning/{id}', [SignificadoPropuestoController::class, 'rejectMeaning']);
+Route::patch('/approveMeaning', [SignificadoPropuestoController::class, 'approveMeaning']);
+
+
 
 

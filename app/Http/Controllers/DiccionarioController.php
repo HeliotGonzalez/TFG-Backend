@@ -51,11 +51,8 @@ class DiccionarioController extends Controller
 
     function getPersonalDictionary($userID)
     {
-        // Consulta desde el modelo Video, de forma similar a la función getVideos,
-        // pero filtrando los videos que estén asociados al diccionario del usuario.
         $videos = Video::with('significado', 'user')
             ->withCount([
-                // Contar likes y dislikes (desde la relación userVideos)
                 'userVideos as likes' => function ($query) {
                     $query->where('action', 'like');
                 },
@@ -67,7 +64,6 @@ class DiccionarioController extends Controller
                 $query->where('user_id', $userID);
             }])
             ->with('significado.etiquetas')
-            // Filtra únicamente los videos que tengan una entrada en el diccionario del usuario
             ->whereHas('diccionario', function ($query) use ($userID) {
                 $query->where('user_id', $userID);
             })
@@ -76,18 +72,13 @@ class DiccionarioController extends Controller
     
         // Procesa cada video para agregar propiedades adicionales y limpiar la respuesta
         $videos->map(function ($video) {
-            // Indica si el video está presente en el diccionario
             $video->inDictionary = $video->diccionario->isNotEmpty();
             
-            // Determina la reacción realizada por el usuario (si existe)
             $reaction = $video->userVideos->first();
             $video->myReaction = $reaction ? $reaction->action : null;
-            // Obtener la palabra asociada al significado
             $palabra = Palabra::where('significado_id', $video->significado_id)->first();
-            // Asignar el nombre de la palabra a la propiedad "palabra"
             $video->palabra = $palabra ? $palabra->nombre : 'Desconocido';
     
-            // Elimina relaciones no necesarias en la respuesta final
             unset($video->diccionario);
             unset($video->userVideos);
             return $video;
@@ -111,11 +102,9 @@ class DiccionarioController extends Controller
             })
             ->get();
     
-        // Procesa cada video para agregar propiedades adicionales y limpiar la respuesta
+
         $videos->map(function ($video) {
-            // Obtener la palabra asociada al significado
             $palabra = Palabra::where('significado_id', $video->significado_id)->first();
-            // Asignar el nombre de la palabra a la propiedad "palabra"
             $video->palabra = $palabra ? $palabra->nombre : 'Desconocido';
 
             return $video;

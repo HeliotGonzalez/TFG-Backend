@@ -7,6 +7,8 @@ use App\Models\Palabra;
 use App\Models\Significado;
 use App\Models\Etiqueta;
 use App\Models\significadoEtiqueta;
+use App\Models\significado_propuesto;
+
 
 
 class PalabraController extends Controller
@@ -75,5 +77,18 @@ class PalabraController extends Controller
     public function getRequiredWords(){
         $words = Palabra::with('significado')->whereDoesntHave('significado.highestVotedVideo')->get();
         return $words;
+    }
+
+    public function updateWord(Request $request) {
+        $data = $request->all();
+        
+        $nuevoSignficado = new significado_propuesto();
+        $nuevoSignficado->user_id = $data['userID'];
+        $nuevoSignficado->palabra = $data['word'];
+        $nuevoSignficado->descripcion_antigua = $data['significadoAntiguo'];
+        $nuevoSignficado->descripcion_propuesta = $data['significadoNuevo'];
+        $nuevoSignficado->save();
+
+        return response()->json(['message' => 'Palabra actualizada correctamente'], 200);
     }
 }
