@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 
 class VideoController extends Controller
 {
-    function getVideos($descripcion, $userID)
+    function getVideos($descripcion, $userID, $palabra)
     {
         $descripcion = urldecode($descripcion);
         
@@ -37,8 +37,11 @@ class VideoController extends Controller
             ->with(['userVideos' => function ($query) use ($userID) {
                 $query->where('user_id', $userID);
             }])
-            ->whereHas('significado', function ($query) use ($descripcion) {
-                $query->where('descripcion', $descripcion);
+            ->whereHas('significado', function ($q) use ($descripcion, $palabra) {
+                $q->where('descripcion', $descripcion)
+                ->whereHas('palabras', fn ($p) =>
+                    $p->where('nombre', $palabra)
+                );
             })->with('significado.etiquetas')
             ->orderBy('likes', 'desc')
             ->whereNotIn('corregido', [1, 3, 5])
@@ -70,12 +73,19 @@ class VideoController extends Controller
 
     function store(Request $request) {
         $data = $request->all();
-        
-        // Buscar el significado en base a la descripción recibida
-        $significado = Significado::where('descripcion', $data['significado'])->first();
+        $palabra = Palabra::where('nombre', $data['palabra'])
+            ->whereHas('significado', function ($q) use ($data) {
+                $q->where('descripcion', $data['significado']);
+            })->first();
 
+        if (!$palabra) {
+            return response()->json(
+                ['message' => 'No existe esa combinación palabra-significado'],
+                422
+            );
+        }
         $video = new Video();
-        $video->significado_id = $significado->id;
+        $video->significado_id = $palabra->significado->id;
         $video->user_id = $data['userID'];
         $video->url = $data['videoUrl'];
         $video->corregido = ($data['corregido'] == 'true') ? 1 : 0;

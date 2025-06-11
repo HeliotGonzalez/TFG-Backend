@@ -43,7 +43,7 @@ Route::patch('/updateWord', [PalabraController::class, 'updateWord']);
 
 
 // Funciones referentes a Video
-Route::get('getVideos/{userID}/{descripcion}',[VideoController::class, 'getVideos'])->where('descripcion', '.*');
+Route::get('getVideos/{userID}/{descripcion}/{palabra}',[VideoController::class, 'getVideos'])->where('descripcion', '.*');
 Route::post('storeVideo', [VideoController::class, 'store']);
 Route::post('/videoLikes', [VideoController::class, 'videoLikes']);
 Route::post('/reportVideo', [VideoController::class, 'reportVideo']);
