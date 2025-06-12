@@ -379,8 +379,12 @@ class VideoController extends Controller
             ->with('user:id,name')
             ->get();
 
-        $totalVideos = Video::count();
 
+        $totalVideos = Video::whereYear('created_at', Carbon::now()->year)
+            ->selectRaw("MONTH(created_at) AS mes, COUNT(*) AS total")
+            ->groupBy('mes')
+            ->orderBy('mes')
+            ->get();
         $totalVideosLastMonth = $this->videosOfLastMonth();
         $totalWords = Palabra::count();
 
