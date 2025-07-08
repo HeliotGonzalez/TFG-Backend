@@ -21,7 +21,7 @@ A continuación se ofrece una visión general de los modelos Eloquent más relev
 
 ## Controladores
 
-Los controladores HTTP exponen los principales endpoints de la API y la lógica de negocio:
+Los controladores HTTP exponen los principales endpoints de la API y la lógica:
 
 - **AmigoController** – gestiona el envío y la aceptación de solicitudes de amistad.  
 - **ChatController** – administra conversaciones de chat y entrega de mensajes.  
