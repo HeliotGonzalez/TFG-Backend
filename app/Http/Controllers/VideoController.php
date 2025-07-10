@@ -158,16 +158,23 @@ class VideoController extends Controller
     }
     
     function reportVideo(Request $request) {
-        $data = $request->all();
+        $validated = $request->validate([
+            'videoID' => 'required|integer|exists:videos,id',
+            'userID'  => 'required|integer|exists:users,id',
+            'reason'  => 'required|string|max:500',
+        ]);
     
-        $reporte = new Reporte();
-        $reporte->video_id = $data['videoID'];
-        $reporte->user_id = $data['userID'];
-        $reporte->contenido = $data['reason'];
-        $reporte->estado = false;
-        $reporte->save();
-    
-        return response()->json(['message' => 'Reporte registrado correctamente'], 200);
+        Reporte::create([
+            'video_id'  => $validated['videoID'],
+            'user_id'   => $validated['userID'],
+            'contenido' => $validated['reason'],
+            'estado'    => false,
+        ]);
+
+        return response()->json(
+            ['message' => 'Reporte registrado correctamente'],
+            201
+        );
     }
 
     function getRecentlyUploadedVideos($userID){
